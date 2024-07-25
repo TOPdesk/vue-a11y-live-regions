@@ -1,0 +1,21 @@
+{
+  "name": "@topdesk/vue-plugin-a11y-live-regions__parent",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/plugin",
+    "packages/demo"
+  ],
+  "scripts": {
+    "build-plugin": "npm run build --workspace @topdesk/vue-plugin-a11y-live-regions",
+    "test": "npm run test --workspace @topdesk/vue-plugin-a11y-live-regions",
+    "pages": "npm run build --workspaces && rimraf public && mkdir public && mv packages/demo/dist/** public",
+    "demo": "npm run build-plugin && npm run dev --workspace @topdesk/vue-plugin-a11y-live-regions__demo"
+  },
+  "author": "Soma Holler",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "rimraf": "^6.1.0",
+    "typescript": "^5.9.3"
+  }
+}

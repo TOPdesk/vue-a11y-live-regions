@@ -1,0 +1,23 @@
+{
+	"name": "@topdesk/vue-plugin-a11y-live-regions__demo",
+	"private": true,
+	"type": "module",
+	"description": "Demo for @topdesk/vue-plugin-a11y-live-regions",
+	"scripts": {
+		"build": "vite build",
+		"dev": "vite"
+	},
+	"author": "Soma Holler",
+	"license": "UNLICENSED",
+	"dependencies": {
+		"@topdesk/vue-plugin-a11y-live-regions": "^0.5.0",
+		"@vitejs/plugin-vue": "^6.0.1",
+		"sass-embedded": "^1.93.3",
+		"typescript": "^5.9.3",
+		"vite": "^7.2.1",
+		"vue": "^3.x"
+	},
+	"devDependencies": {
+		"@types/node": "^24.10.0"
+	}
+}

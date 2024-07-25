@@ -1,0 +1,58 @@
+{
+	"name": "@topdesk/vue-plugin-a11y-live-regions",
+	"type": "module",
+	"version": "0.5.0",
+	"description": "Convenience to make status announcements with live regions more developer-friendly",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		"./testing": {
+			"types": "./dist/testing.d.ts",
+			"default": "./dist/testing.js"
+		},
+		"./jsdom": {
+			"types": "./dist/jsdom.d.ts",
+			"default": "./dist/jsdom.js"
+		},
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		}
+	},
+	"scripts": {
+		"build": "tsc --project tsconfig.build.json",
+		"prepack": "npm run build",
+		"test": "npm run lint && npm run typecheck && npm run test:specs",
+		"typecheck": "tsc",
+		"test:specs": "vitest --coverage.enabled",
+		"lint": "eslint --max-warnings 0"
+	},
+	"files": [
+		"./dist/"
+	],
+	"keywords": [
+		"a11y",
+		"aria-live",
+		"status",
+		"vue",
+		"plugin"
+	],
+	"author": "Soma Holler",
+	"license": "UNLICENSED",
+	"peerDependencies": {
+		"vue": "^3.5.x"
+	},
+	"devDependencies": {
+		"@eslint/js": "^9.17.0",
+		"@stylistic/eslint-plugin": "^5.5.0",
+		"@vitest/browser-playwright": "^4.0.7",
+		"@vitest/coverage-v8": "^4.0.7",
+		"@vue/test-utils": "^2.4.6",
+		"eslint": "^9.39.1",
+		"globals": "^16.5.0",
+		"playwright": "^1.56.1",
+		"typescript": "^5.9.3",
+		"typescript-eslint": "^8.46.3",
+		"vitest": "^4.0.7"
+	}
+}

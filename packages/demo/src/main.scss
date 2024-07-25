@@ -1,0 +1,73 @@
+:root {
+	--border-radius: 8px;
+}
+
+html, body, [data-v-app] {
+	font-family: Arial, Helvetica, sans-serif;
+	color: rgb(57, 59, 65);
+	height: 100%;
+	padding: 0;
+	margin: 0;
+	overflow: auto;
+}
+
+input, button {
+	min-height: 2rem;
+	min-width: 1rem;
+	max-width: 100%;
+	padding: 0.5rem;
+	font-size: 1rem;
+	border-radius: var(--border-radius);
+	border: 1px solid gray;
+	margin: 0;
+	outline-color: darkcyan;
+	accent-color: darkcyan;
+	outline-width: 0.5rem;
+}
+
+a {
+	outline-color: darkcyan;
+}
+
+button {
+	&:hover {
+		cursor: pointer;
+	}
+
+	&:active {
+		background-color: #d1d5db;
+	}
+}
+
+h1, h2, h3, h4, h5, h6 {
+	margin: 4px 0;
+}
+
+form {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 8px;
+	max-width: 100%;
+}
+
+.panel {
+	border: 1px solid darkgray;
+	border-radius: var(--border-radius);
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	align-items: flex-start;
+	padding: 16px;
+	box-shadow: 0 0 12px rgb(228, 228, 228);
+}
+
+.radio-container, .checkbox-container {
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+}
+
+* {
+	box-sizing: border-box;
+}
