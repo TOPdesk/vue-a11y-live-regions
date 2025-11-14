@@ -19,7 +19,7 @@ export default defineConfig({
 		outDir: '../dist',
 		emptyOutDir: true,
 	},
-	base: process.env.NODE_ENV === 'production' ? '/SomaH/vue-plugin-a11y-live-regions/' : '/',
+	base: process.env.NODE_ENV === 'production' ? '/vue-a11y-live-regions/' : '/',
 	resolve: {
 		alias
 	}

@@ -6,7 +6,7 @@ This plugin aims to make announcing status changes to screen reader users easier
 - [Installation](./docs/installation.md)
 - [Usage](./docs/usage.md)
 - [Testing](./docs/testing.md)
-- Demo -- TODO
+- [Demo](https://topdesk.github.io/vue-a11y-live-regions/)
 
 ## When to use this plugin
 - If you care about screen-reader users getting live updates on dynamic state changes in your application (you should), but it's a bit too inconvenient
