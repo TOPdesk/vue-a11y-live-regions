@@ -21,7 +21,8 @@
 	},
 	"scripts": {
 		"build": "tsc --project tsconfig.build.json",
-		"prepack": "npm run build",
+		"prepack": "cp ../../README.md ./README.md && npm run build",
+		"postpack": "rm ./README.md",
 		"test": "npm run lint && npm run typecheck && npm run test:specs",
 		"typecheck": "tsc",
 		"test:specs": "vitest --coverage.enabled",
@@ -35,10 +36,15 @@
 		"aria-live",
 		"status",
 		"vue",
-		"plugin"
+		"plugin",
+		"accessibility",
+		"screen",
+		"reader",
+		"screen-reader",
+		"announcement"
 	],
 	"author": "Soma Holler",
-	"license": "UNLICENSED",
+	"license": "MIT",
 	"peerDependencies": {
 		"vue": "^3.5.x"
 	},

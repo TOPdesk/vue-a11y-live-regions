@@ -8,7 +8,7 @@
 		"dev": "vite"
 	},
 	"author": "Soma Holler",
-	"license": "UNLICENSED",
+	"license": "MIT",
 	"dependencies": {
 		"@topdesk/vue-plugin-a11y-live-regions": "^1.0.0-prerelease.1",
 		"@vitejs/plugin-vue": "^6.0.1",
