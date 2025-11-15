@@ -17,9 +17,9 @@ vi.mock(import('../src/plugin.js'), async (importOriginal) => {
 			const pluginInstance = original.createPluginInternal(options);
 			return {
 				install: pluginInstance.install,
-				cleanup: async () => {
+				cleanup: () => {
 					pluginCleanup();
-					await pluginInstance.cleanup();
+					pluginInstance.cleanup();
 				},
 			};
 		},
@@ -32,22 +32,22 @@ afterEach(() => {
 });
 
 describe('The global cleanup', () => {
-	test('cleans up all test plugin instances', async () => {
+	test('cleans up all test plugin instances', () => {
 		createTestingPlugin();
 		createTestingPlugin();
 
-		await cleanup();
+		cleanup();
 		expect(pluginCleanup).toHaveBeenCalledTimes(2);
 
 		// They don't get called again after
-		await cleanup();
+		cleanup();
 		expect(pluginCleanup).toHaveBeenCalledTimes(2);
 	});
 
-	test('does not clean up production plugin instances', async () => {
+	test('does not clean up production plugin instances', () => {
 		createLiveRegionPlugin();
 
-		await cleanup();
+		cleanup();
 		expect(pluginCleanup).not.toHaveBeenCalled();
 	});
 });

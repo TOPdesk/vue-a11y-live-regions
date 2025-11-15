@@ -72,18 +72,14 @@ describe('The plugin', () => {
 		const { wrapper } = await mountWithPlugin(() => h('div'));
 
 		wrapper.unmount();
-		await vi.waitFor(() => {
-			expect(getGlobalListener().unmount).toHaveBeenCalled();
-		});
+		expect(getGlobalListener().unmount).toHaveBeenCalled();
 	});
 
 	test('cleans up its global listener on manual cleanup', async () => {
 		const { cleanup } = await mountWithPlugin(() => h('div'));
 
 		cleanup();
-		await vi.waitFor(() => {
-			expect(getGlobalListener().unmount).toHaveBeenCalled();
-		});
+		expect(getGlobalListener().unmount).toHaveBeenCalled();
 	});
 });
 

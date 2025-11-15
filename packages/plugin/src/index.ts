@@ -20,7 +20,7 @@ export type PluginOptions = PublicPluginOptions;
  * createApp(RouterView).use(liveRegionPlugin);
  *
  * // Clean up the DOM changes caused by this specific plugin instance
- * await liveRegionPlugin.cleanup();
+ * liveRegionPlugin.cleanup();
  */
 export const createLiveRegionPlugin = (options: PluginOptions = {}): CreatePluginReturnType => createPluginInternal(options);
 

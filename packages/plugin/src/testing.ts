@@ -15,7 +15,7 @@ export type PluginOptions = PublicPluginOptions & { advanceTimersFn?: AdvanceTim
 
 export type CreateTestingPluginReturnType = CreatePluginReturnType & Omit<TestHookReturnType, 'onAnnouncement'>;
 
-const cleanupFunctions: (() => Promise<void>)[] = [];
+const cleanupFunctions: (() => void)[] = [];
 
 function createAnnouncementHook(advanceTimersFn?: AdvanceTimersFn): TestHookReturnType {
 	const announcements: HandledAnnouncement[] = [];
@@ -63,7 +63,7 @@ function createAnnouncementHook(advanceTimersFn?: AdvanceTimersFn): TestHookRetu
  */
 export const createTestingPlugin = (options: PluginOptions = {}): CreateTestingPluginReturnType => {
 	const { clearAnnouncements, onAnnouncement, getAnnouncements, waitUntilReady } = createAnnouncementHook(options.advanceTimersFn);
-	const plugin = createPluginInternal({ ...options, onAnnouncement, beforeCleanup: clearAnnouncements }); // clear up possible dangling announcements
+	const plugin = createPluginInternal({ ...options, onAnnouncement });
 
 	cleanupFunctions.push(plugin.cleanup);
 
@@ -80,7 +80,7 @@ export const createTestingPlugin = (options: PluginOptions = {}): CreateTestingP
  *
  * **Example use-case:** cleaning up leftover live regions in the rendered DOM before/after tests.
  */
-export async function cleanup() {
-	await Promise.all(cleanupFunctions.map(fn => fn()));
+export function cleanup() {
+	cleanupFunctions.forEach(fn => fn());
 	cleanupFunctions.length = 0;
 }

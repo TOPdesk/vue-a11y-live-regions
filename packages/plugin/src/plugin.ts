@@ -1,18 +1,17 @@
 import { defineComponent, Directive, getCurrentInstance, h, inject, ObjectPlugin, onMounted, ref, SlotsType, withModifiers } from 'vue';
 import { createGlobalListener } from './global-listener.js';
 import { announcementEventName, AnnouncementHandledHook, AnnouncerManager, requestAnnouncement, GlobalAnnouncementRequestEvent, AnnouncementType } from './announcer.js';
-import { announcerManagerKey, checkVisibility, globalListenerIdKey, INITIAL_TIMEOUT, noop } from './utils.js';
+import { announcerManagerKey, checkVisibility, globalListenerIdKey, INITIAL_TIMEOUT } from './utils.js';
 
 export interface InternalPluginOptions {
 	waitForElement?: WaitForElement;
 	onAnnouncement?: AnnouncementHandledHook;
-	beforeCleanup?: () => void | Promise<void>;
 };
 
 export type PublicPluginOptions = Pick<InternalPluginOptions, 'waitForElement'>;
 
 export type CreatePluginReturnType = ObjectPlugin & {
-	cleanup: () => Promise<void>;
+	cleanup: () => void;
 };
 
 export interface AnnouncementOptions {
@@ -40,14 +39,13 @@ interface HtmlElementWithCustomProperties extends HTMLElement {
 	[key: string]: unknown;
 }
 
-export function createPluginInternal({ waitForElement, onAnnouncement, beforeCleanup = noop }: InternalPluginOptions = {}): CreatePluginReturnType {
+export function createPluginInternal({ waitForElement, onAnnouncement }: InternalPluginOptions = {}): CreatePluginReturnType {
 	const announcerManager = AnnouncerManager(onAnnouncement);
 	const { id, mount, unmount } = createGlobalListener(announcerManager);
 
 	return {
 		/** Clean up the DOM changes caused by this specific plugin instance */
-		async cleanup() {
-			await beforeCleanup();
+		cleanup() {
 			unmount();
 		},
 		install(app) {

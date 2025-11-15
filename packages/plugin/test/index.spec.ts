@@ -14,7 +14,7 @@ vi.mock(import('../src/plugin.js'));
 vi.mocked(createPluginInternal).mockReturnValue(mockPlugin);
 
 describe('The production plugin', () => {
-	test('creates the correct internal instance', async () => {
+	test('creates the correct internal instance', () => {
 		const prodPlugin = createLiveRegionPlugin({ waitForElement });
 		expect(createPluginInternal).toHaveBeenCalledWith({ waitForElement });
 
@@ -22,7 +22,7 @@ describe('The production plugin', () => {
 		prodPlugin.install(app);
 		expect(mockPlugin.install).toHaveBeenCalledWith(app);
 
-		await prodPlugin.cleanup();
+		prodPlugin.cleanup();
 		expect(mockPlugin.cleanup).toHaveBeenCalled();
 	});
 });

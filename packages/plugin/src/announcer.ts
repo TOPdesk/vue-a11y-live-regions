@@ -92,10 +92,11 @@ export function AnnouncerManager(onAnnouncement: AnnouncementHandledHook = noop)
 			const { replaceText: announceAlert } = createDivGroup(wrapper, (e) => { e.role = 'alert'; });
 
 			const buffer: AnnouncementRequest[] = [];
+			let bufferTimeout: ReturnType<typeof setTimeout>;
 
 			function announce(request: AnnouncementRequest) {
 				if (!buffer.length) {
-					setTimeout(() => {
+					bufferTimeout = setTimeout(() => {
 						if (!enableAnnouncements) {
 							buffer.length = 0;
 							return;
@@ -142,6 +143,7 @@ export function AnnouncerManager(onAnnouncement: AnnouncementHandledHook = noop)
 			}
 
 			function unmount() {
+				clearTimeout(bufferTimeout);
 				wrapper.remove();
 			}
 
