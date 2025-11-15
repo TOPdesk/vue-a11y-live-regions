@@ -1,4 +1,4 @@
-import { noop } from './utils.js';
+import { BUFFER_TIMEOUT, noop } from './utils.js';
 
 const cssClass = createStyling();
 export const announcementEventName = 'vue-plugin-a11y-live-announcement';
@@ -135,7 +135,7 @@ export function AnnouncerManager(onAnnouncement: AnnouncementHandledHook = noop)
 						}
 
 						buffer.length = 0;
-					});
+					}, BUFFER_TIMEOUT);
 				}
 
 				buffer.push(request);

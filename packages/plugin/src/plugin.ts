@@ -1,7 +1,7 @@
 import { defineComponent, Directive, getCurrentInstance, h, inject, ObjectPlugin, onMounted, ref, SlotsType, withModifiers } from 'vue';
 import { createGlobalListener } from './global-listener.js';
 import { announcementEventName, AnnouncementHandledHook, AnnouncerManager, requestAnnouncement, GlobalAnnouncementRequestEvent, AnnouncementType } from './announcer.js';
-import { announcerManagerKey, checkVisibility, globalListenerIdKey } from './utils.js';
+import { announcerManagerKey, checkVisibility, globalListenerIdKey, INITIAL_TIMEOUT } from './utils.js';
 
 export interface PluginOptions {
 	waitForElement?: WaitForElement;
@@ -173,5 +173,5 @@ function skipFirstLoadAnnouncements(announcerManager: AnnouncerManager) {
 
 	setTimeout(() => {
 		announcerManager.allowAnnouncements(true);
-	}, 100);
+	}, INITIAL_TIMEOUT);
 }

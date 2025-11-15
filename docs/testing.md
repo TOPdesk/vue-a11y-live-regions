@@ -2,7 +2,7 @@
 
 ## Setup
 To be able to test the announcing behavior in your application, you'll need multiple things:
-1. A dom-based test environment (e.g. `jsdom`)
+1. A dom-based test environment (e.g. `jsdom`, or an actual browser)
 1. The plugin needs to be registered in your test Vue application
 1. The tested component [needs to be attached to the document](https://test-utils.vuejs.org/api/#attachTo)
 1. If you use `jsdom` as a testing environment, you will need to polyfill the `innerText` property of `HTMLElement`. The plugin provides a basic utility for this. See: [Polyfilling jsdom](#polyfilling-jsdom)
@@ -13,10 +13,23 @@ For testing, it's recommended to use `createTestingPlugin` instead of `createLiv
 
 Internally, the two plugins work the same way, but `createTestingPlugin` exposes extra utilities for testing.
 
+#### Timers
+The plugin uses timers internally to guarantee specific behaviors, like announcing multiple messages coming in at the same time, or skipping unwanted announcements on the first load of the application. To make sure your tests can take these into account, the testing plugin exposes some utilities.
+
+##### waitUntilReady
+The return value of `createTestingPlugin` exposes a `waitUntilReady` function. To make sure the plugin is ready to announce a state change after the initial render, you can wait for the `Promise` returned by `waitUntilReady`, before moving on to triggering the state change.
+
+##### Fake timers
+If your test uses fake timers, the plugin needs to know about this to make sure it works correctly. You can do this by passing a function to the testing plugin on creation as an option.
+
+Example for Vitest: `createTestingPlugin({ advanceTimersFn: vi.advanceTimersByTime });`
+
+*Note: fake timers can be beneficial to speed up tests making announcement assertions.*
+
 #### Announcements
 The return value of `createTestingPlugin` exposes a `getAnnouncements` function. This function is asynchronous, and should be awaited to retrieve an array of all the announcement requests made since the plugin was installed, or the [announcements were manually cleared](#manually-clearing-announcement-history).
 
-The function makes sure internally that the [waitForElement](./installation.md#waitforelement-optional) promises are flushed before evaluating and returning the announcements.
+The function makes sure internally that the [waitForElement](./installation.md#waitforelement-optional) promises and other timers are flushed before evaluating and returning the announcements.
 
 Each `announcement` entry contains the following properties:
 - `text`: The text content of the announcement.
@@ -49,7 +62,12 @@ test('Status is correct', async () => {
 		global: {
 			plugins: [liveRegionPlugin]
 		}
-	})
+	});
+
+	await liveRegionPlugin.waitUntilReady();
+
+	// Trigger a state change
+	// ...
 
 	// Validate announcements
 	const announcements = await getAnnouncements();
