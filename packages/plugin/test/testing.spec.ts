@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { cleanup, createTestingPlugin } from '../src/testing.js';
+import { cleanup, createTestingPlugin, PluginOptions } from '../src/testing.js';
 import { AnnouncementOptions, createLiveRegionPlugin, LiveBoundary, LiveBoundaryApi } from '../src/index.js';
 import { DummyComponent, withDirective } from './test-utils.js';
 import { mount } from '@vue/test-utils';
@@ -27,10 +27,6 @@ afterEach(() => {
 	vi.useRealTimers();
 });
 
-beforeEach(() => {
-	vi.useFakeTimers();
-});
-
 describe('The global cleanup', () => {
 	test('cleans up all test plugin instances', () => {
 		createTestingPlugin();
@@ -52,14 +48,19 @@ describe('The global cleanup', () => {
 	});
 });
 
-describe('The test plugin', () => {
+describe.each<{ timer: string; options: PluginOptions; prep: () => void }>([
+	{ timer: 'real', options: {}, prep: () => {} },
+	{ timer: 'fake', options: { advanceTimersFn: vi.advanceTimersByTime }, prep: () => vi.useFakeTimers() },
+])('The test plugin, with a $timer timer', ({ options, prep }) => {
 	const announcement = 'Component is ready';
 
-	function mountWithPlugin<T extends Parameters<typeof mount>[0]>(vnode: T) {
-		const plugin = createTestingPlugin();
+	beforeEach(prep);
+
+	async function mountWithPlugin<T extends Parameters<typeof mount>[0]>(vnode: T) {
+		const plugin = createTestingPlugin(options);
 		const wrapper = mount(vnode, { attachTo: document.body, global: { plugins: [ plugin ] } });
 
-		vi.advanceTimersByTime(110); // skip first load timeout
+		await plugin.waitUntilReady();
 
 		return { wrapper, ...plugin };
 	}
@@ -70,10 +71,9 @@ describe('The test plugin', () => {
 		{ type: undefined, handledType: 'status' },
 	])('catches announcements with type $type from', ({ type, handledType }) => {
 		test('the composable', async () => {
-			const { wrapper, getAnnouncements } = mountWithPlugin(h(DummyComponent));
+			const { wrapper, getAnnouncements } = await mountWithPlugin(h(DummyComponent));
 
 			await wrapper.setProps({ text: announcement, type });
-			skipBufferTime();
 
 			const announcements = await getAnnouncements();
 			expect(announcements).toHaveLength(1);
@@ -87,11 +87,10 @@ describe('The test plugin', () => {
 
 		test('the directive', async () => {
 			const text = ref('');
-			const { wrapper, getAnnouncements } = mountWithPlugin(withDirective(() => h('span', text.value), { modifiers: { alert: type === 'alert' } }));
+			const { wrapper, getAnnouncements } = await mountWithPlugin(withDirective(() => h('span', text.value), { modifiers: { alert: type === 'alert' } }));
 
 			text.value = announcement;
 			await nextTick();
-			skipBufferTime();
 
 			const announcements = await getAnnouncements();
 			expect(announcements).toHaveLength(1);
@@ -105,11 +104,10 @@ describe('The test plugin', () => {
 
 		describe('the live boundary', () => {
 			test('announce function', async () => {
-				const { wrapper, getAnnouncements } = mountWithPlugin(h(LiveBoundary, () => h('div')));
+				const { wrapper, getAnnouncements } = await mountWithPlugin(h(LiveBoundary, () => h('div')));
 				const instance = wrapper.vm as unknown as LiveBoundaryApi;
 
 				instance.announce(announcement, { type });
-				skipBufferTime();
 
 				const announcements = await getAnnouncements();
 				expect(announcements).toHaveLength(1);
@@ -123,11 +121,10 @@ describe('The test plugin', () => {
 
 			test('when a child component calls the global announce function', async () => {
 				const text = ref('');
-				const { wrapper, getAnnouncements } = mountWithPlugin(() => h(LiveBoundary, () => h(DummyComponent, { text: text.value, type })));
+				const { wrapper, getAnnouncements } = await mountWithPlugin(() => h(LiveBoundary, () => h(DummyComponent, { text: text.value, type })));
 
 				text.value = announcement;
 				await nextTick();
-				skipBufferTime();
 
 				const announcements = await getAnnouncements();
 				expect(announcements).toHaveLength(1);
@@ -142,11 +139,10 @@ describe('The test plugin', () => {
 			test('when a child component has the directive', async () => {
 				const childId = 'child';
 				const text = ref('');
-				const { wrapper, getAnnouncements } = mountWithPlugin(() => h(LiveBoundary, () => h(withDirective(() => h('span', { id: childId, innerText: text.value }), { modifiers: { alert: type === 'alert' } }))));
+				const { wrapper, getAnnouncements } = await mountWithPlugin(() => h(LiveBoundary, () => h(withDirective(() => h('span', { id: childId, innerText: text.value }), { modifiers: { alert: type === 'alert' } }))));
 
 				text.value = announcement;
 				await nextTick();
-				skipBufferTime();
 
 				const announcements = await getAnnouncements();
 				expect(announcements).toHaveLength(1);
@@ -162,11 +158,10 @@ describe('The test plugin', () => {
 
 	test('can clear the collected announcements', async () => {
 		const text = ref('');
-		const { getAnnouncements, clearAnnouncements } = mountWithPlugin(() => h(DummyComponent, { text: text.value }));
+		const { getAnnouncements, clearAnnouncements } = await mountWithPlugin(() => h(DummyComponent, { text: text.value }));
 
 		text.value = announcement;
 		await nextTick();
-		skipBufferTime();
 
 		expect((await getAnnouncements())).toHaveLength(1);
 
@@ -189,7 +184,3 @@ describe('The test plugin', () => {
 	});
 
 });
-
-function skipBufferTime() {
-	vi.advanceTimersByTime(1);
-}

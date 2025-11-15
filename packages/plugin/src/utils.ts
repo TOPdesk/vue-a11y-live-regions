@@ -10,6 +10,9 @@ export const announcerManagerKey: InjectionKey<AnnouncerManager> = Symbol('annou
 
 export const noop = () => {};
 
+export const INITIAL_TIMEOUT = 100;
+export const BUFFER_TIMEOUT = 0;
+
 // Credit to: https://github.com/kentor/flush-promises
 const scheduler = typeof setImmediate === 'function' ? setImmediate : setTimeout;
 export function flushPromises() {
