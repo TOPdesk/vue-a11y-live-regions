@@ -5,6 +5,7 @@ import { DummyComponent, withDirective } from './test-utils.js';
 import { mount } from '@vue/test-utils';
 import { h, nextTick, ref } from 'vue';
 import { AnnouncementType } from '../src/announcer.js';
+import { noop } from '../src/utils.js';
 
 const pluginCleanup = vi.fn();
 
@@ -16,7 +17,10 @@ vi.mock(import('../src/plugin.js'), async (importOriginal) => {
 			const pluginInstance = original.createPluginInternal(options);
 			return {
 				install: pluginInstance.install,
-				cleanup: pluginCleanup,
+				cleanup: async () => {
+					pluginCleanup();
+					await pluginInstance.cleanup();
+				},
 			};
 		},
 	};
@@ -28,28 +32,28 @@ afterEach(() => {
 });
 
 describe('The global cleanup', () => {
-	test('cleans up all test plugin instances', () => {
+	test('cleans up all test plugin instances', async () => {
 		createTestingPlugin();
 		createTestingPlugin();
 
-		cleanup();
+		await cleanup();
 		expect(pluginCleanup).toHaveBeenCalledTimes(2);
 
 		// They don't get called again after
-		cleanup();
+		await cleanup();
 		expect(pluginCleanup).toHaveBeenCalledTimes(2);
 	});
 
-	test('does not clean up production plugin instances', () => {
+	test('does not clean up production plugin instances', async () => {
 		createLiveRegionPlugin();
 
-		cleanup();
+		await cleanup();
 		expect(pluginCleanup).not.toHaveBeenCalled();
 	});
 });
 
 describe.each<{ timer: string; options: PluginOptions; prep: () => void }>([
-	{ timer: 'real', options: {}, prep: () => {} },
+	{ timer: 'real', options: {}, prep: noop },
 	{ timer: 'fake', options: { advanceTimersFn: vi.advanceTimersByTime }, prep: () => vi.useFakeTimers() },
 ])('The test plugin, with a $timer timer', ({ options, prep }) => {
 	const announcement = 'Component is ready';
@@ -177,7 +181,15 @@ describe.each<{ timer: string; options: PluginOptions; prep: () => void }>([
 	});
 
 	test('cleans up after itself when the app is unmounted', async () => {
-		const { wrapper } = await mountWithPlugin(() => h('div'));
+		const text = ref('');
+		const { wrapper } = await mountWithPlugin(() => h(DummyComponent, { text: text.value }));
+
+		/*
+			This tests implicitly that there are no dangling announcements
+			that could trigger an UnmountedAnnouncementError
+		 */
+		text.value = announcement;
+		await nextTick();
 
 		wrapper.unmount();
 		expect(pluginCleanup).toHaveBeenCalled();

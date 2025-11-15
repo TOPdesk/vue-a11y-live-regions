@@ -1,4 +1,4 @@
-import { CreatePluginReturnType, createPluginInternal, PluginOptions as InternalPluginOptions } from './plugin.js';
+import { CreatePluginReturnType, createPluginInternal, PublicPluginOptions } from './plugin.js';
 import { HandledAnnouncement, AnnouncementHandledHook } from './announcer.js';
 import { BUFFER_TIMEOUT, INITIAL_TIMEOUT } from './utils.js';
 
@@ -11,11 +11,11 @@ interface TestHookReturnType {
 
 type AdvanceTimersFn = (ms: number) => unknown;
 
-export type PluginOptions = Omit<InternalPluginOptions, 'onAnnouncement'> & { advanceTimersFn?: AdvanceTimersFn };
+export type PluginOptions = PublicPluginOptions & { advanceTimersFn?: AdvanceTimersFn };
 
 export type CreateTestingPluginReturnType = CreatePluginReturnType & Omit<TestHookReturnType, 'onAnnouncement'>;
 
-const cleanupFunctions: (() => void)[] = [];
+const cleanupFunctions: (() => Promise<void>)[] = [];
 
 function createAnnouncementHook(advanceTimersFn?: AdvanceTimersFn): TestHookReturnType {
 	const announcements: HandledAnnouncement[] = [];
@@ -63,7 +63,7 @@ function createAnnouncementHook(advanceTimersFn?: AdvanceTimersFn): TestHookRetu
  */
 export const createTestingPlugin = (options: PluginOptions = {}): CreateTestingPluginReturnType => {
 	const { clearAnnouncements, onAnnouncement, getAnnouncements, waitUntilReady } = createAnnouncementHook(options.advanceTimersFn);
-	const plugin = createPluginInternal({ ...options, onAnnouncement });
+	const plugin = createPluginInternal({ ...options, onAnnouncement, beforeCleanup: clearAnnouncements }); // clear up possible dangling announcements
 
 	cleanupFunctions.push(plugin.cleanup);
 
@@ -80,7 +80,7 @@ export const createTestingPlugin = (options: PluginOptions = {}): CreateTestingP
  *
  * **Example use-case:** cleaning up leftover live regions in the rendered DOM before/after tests.
  */
-export function cleanup() {
-	cleanupFunctions.forEach(fn => fn());
+export async function cleanup() {
+	await Promise.all(cleanupFunctions.map(fn => fn()));
 	cleanupFunctions.length = 0;
 }

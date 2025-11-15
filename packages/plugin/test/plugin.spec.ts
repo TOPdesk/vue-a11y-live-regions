@@ -1,11 +1,11 @@
 import { afterEach, assert, beforeEach, describe, expect, test, vi } from 'vitest';
-import { AnnouncementOptions, Announcer, createPluginInternal, LiveBoundary, LiveBoundaryApi, PluginOptions, useAnnouncer } from '../src/plugin.js';
+import { AnnouncementOptions, Announcer, createPluginInternal, LiveBoundary, LiveBoundaryApi, InternalPluginOptions, useAnnouncer } from '../src/plugin.js';
 import { mount } from '@vue/test-utils';
 import { FunctionalComponent, h, nextTick, Ref, ref, vShow, withDirectives } from 'vue';
 import { AnnouncementType, AnnouncerManager, InternalAnnouncer, requestAnnouncement } from '../src/announcer.js';
 import { DummyComponent, withDirective } from './test-utils.js';
 import { createGlobalListener } from '../src/global-listener.js';
-import { flushPromises } from '../src/utils.js';
+import { flushPromises, noop } from '../src/utils.js';
 
 vi.mock(import('../src/announcer.js'), { spy: true });
 
@@ -72,14 +72,18 @@ describe('The plugin', () => {
 		const { wrapper } = await mountWithPlugin(() => h('div'));
 
 		wrapper.unmount();
-		expect(getGlobalListener().unmount).toHaveBeenCalled();
+		await vi.waitFor(() => {
+			expect(getGlobalListener().unmount).toHaveBeenCalled();
+		});
 	});
 
 	test('cleans up its global listener on manual cleanup', async () => {
 		const { cleanup } = await mountWithPlugin(() => h('div'));
 
 		cleanup();
-		expect(getGlobalListener().unmount).toHaveBeenCalled();
+		await vi.waitFor(() => {
+			expect(getGlobalListener().unmount).toHaveBeenCalled();
+		});
 	});
 });
 
@@ -201,7 +205,7 @@ describe('The directive', () => {
 
 	test.each([
 		// @ts-expect-error Explicitly testing wrong input
-		{ name: 'the text directive value', setup: () => mountWithPlugin(withDirective(h('div'), { value: () => ({ text: () => {} }) })) },
+		{ name: 'the text directive value', setup: () => mountWithPlugin(withDirective(h('div'), { value: () => ({ text: noop }) })) },
 		{ name: 'an element property', setup: () => mountWithPlugin(withDirective(h('div'), { arg: 'click' })) },
 	])('prevents setting a non-string value from $name', async ({ setup }) => {
 		await setup();
@@ -324,7 +328,7 @@ describe('The live boundary', () => {
 	});
 });
 
-async function mountWithPlugin(vnode: Parameters<typeof mount>[0], options: PluginOptions = {}) {
+async function mountWithPlugin(vnode: Parameters<typeof mount>[0], options: InternalPluginOptions = {}) {
 	const plugin = createPluginInternal(options);
 	const wrapper = mount(vnode, { attachTo: document.body, global: { plugins: [ plugin ] } });
 	await flushPromises();

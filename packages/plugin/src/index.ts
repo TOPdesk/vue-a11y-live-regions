@@ -1,8 +1,8 @@
 
-import { CreatePluginReturnType, PluginOptions as InternalPluginOptions, VLiveDirective } from './plugin.js';
+import { CreatePluginReturnType, PublicPluginOptions, VLiveDirective } from './plugin.js';
 import { createPluginInternal } from './plugin.js';
 
-export type PluginOptions = Omit<InternalPluginOptions, 'onAnnouncement'>;
+export type PluginOptions = PublicPluginOptions;
 
 /**
  * Creates an instance of the live region plugin that can be registered on a Vue application instance.
@@ -20,7 +20,7 @@ export type PluginOptions = Omit<InternalPluginOptions, 'onAnnouncement'>;
  * createApp(RouterView).use(liveRegionPlugin);
  *
  * // Clean up the DOM changes caused by this specific plugin instance
- * liveRegionPlugin.cleanup();
+ * await liveRegionPlugin.cleanup();
  */
 export const createLiveRegionPlugin = (options: PluginOptions = {}): CreatePluginReturnType => createPluginInternal(options);
 

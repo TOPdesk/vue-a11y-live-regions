@@ -48,9 +48,9 @@ import Component from './Component.vue';
 import { createTestingPlugin, cleanup } from '@topdesk/vue-plugin-a11y-live-regions/testing';
 
 // If the app is not unmounted between test runs or the automatic cleanup is not enough
-afterEach(() => {
+afterEach(async () => {
 	// Cleans up all testing plugin instances
-	cleanup();
+	await cleanup();
 })
 
 test('Status is correct', async () => {
