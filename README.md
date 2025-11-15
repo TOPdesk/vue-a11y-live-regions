@@ -3,9 +3,9 @@
 This plugin aims to make announcing status changes to screen reader users easier and more reliable via the use of custom directives and utility functions that can be used in JavaScript/TypeScript and in Vue SFC templates.
 
 ## Docs
-- [Installation](./docs/installation.md)
-- [Usage](./docs/usage.md)
-- [Testing](./docs/testing.md)
+- [Installation](https://github.com/TOPdesk/vue-a11y-live-regions/blob/main/docs/installation.md)
+- [Usage](https://github.com/TOPdesk/vue-a11y-live-regions/blob/main/docs/usage.md)
+- [Testing](https://github.com/TOPdesk/vue-a11y-live-regions/blob/main/docs/testing.md)
 - [Demo](https://topdesk.github.io/vue-a11y-live-regions/)
 
 ## When to use this plugin
