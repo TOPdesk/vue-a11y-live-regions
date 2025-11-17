@@ -7,14 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 *Note: The commit history is not aligned completely with this changelog, as the project had a different history while it was still closed-souce.*
 
-## Unreleased
+## [1.0.0] - 2025-11-17
 ### Fixed
 - The plugin can now announce multiple messages coming in at the same time
 
 ### Changed
 - **Breaking**: Announcements no longer happen on the first (sync) load of the application
+	- This also affects tests relying on announcements on the first mounting of the application. You can find further information in the [Timers section of the testing documentation](./docs/testing.md#timers).
 - The project was moved to GitHub and got open-sourced
-- dependency updates
+- Dependency updates
 
 ## [0.5.0] - 2025-04-04
 ### Fixed
