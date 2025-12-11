@@ -1,0 +1,20 @@
+{
+	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
+	"extends": [
+		"config:recommended",
+		"helpers:pinGitHubActionDigests"
+	],
+	"enabledManagers": [
+		"npm",
+		"github-actions"
+	],
+	"rangeStrategy": "bump",
+	"labels": [
+		"dependencies"
+	],
+	"rebaseWhen": "behind-base-branch",
+	"lockFileMaintenance": {
+		"enabled": true
+	},
+	"timezone": "UTC"
+}

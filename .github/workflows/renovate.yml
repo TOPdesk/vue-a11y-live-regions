@@ -1,0 +1,26 @@
+
+name: Renovate
+
+on:
+  workflow_dispatch: {}
+  # Regular schedule (every day at 03:00 UTC)
+  schedule:
+    - cron: "0 3 * * *"
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  renovate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Renovate
+        uses: renovatebot/github-action@v44.0.5
+        env:
+          LOG_LEVEL: info
+          RENOVATE_REPOSITORIES: TOPdesk/vue-a11y-live-regions
+        with:
+          token: ${{ secrets.RENOVATE_TOKEN }}
