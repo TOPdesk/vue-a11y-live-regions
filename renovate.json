@@ -16,5 +16,18 @@
 	"lockFileMaintenance": {
 		"enabled": true
 	},
-	"timezone": "UTC"
+	"timezone": "UTC",
+	"packageRules": [
+		{
+			"groupName": "Playwright monorepo",
+			"matchDatasources": [
+				"docker",
+				"npm"
+			],
+			"matchPackageNames": [
+				"playwright",
+				"mcr.microsoft.com/playwright"
+			]
+		}
+	]
 }
