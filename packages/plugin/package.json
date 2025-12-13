@@ -46,7 +46,7 @@
 	"author": "Soma Holler",
 	"license": "MIT",
 	"peerDependencies": {
-		"vue": "^3.5.x"
+		"vue": "^3.5.25"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.17.0",
