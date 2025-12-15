@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 *Note: The commit history is not aligned completely with this changelog, as the project had a different history while it was still closed-souce.*
 
+## [1.0.1] - 2025-12-15
+### Changed
+- Dependency updates
+- Internal: Repository added to package.json
+
 ## [1.0.0] - 2025-11-17
 ### Fixed
 - The plugin can now announce multiple messages coming in at the same time
