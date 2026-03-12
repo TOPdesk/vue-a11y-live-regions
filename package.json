@@ -15,7 +15,7 @@
 	"author": "Soma Holler",
 	"license": "MIT",
 	"devDependencies": {
-		"rimraf": "^6.1.2",
+		"rimraf": "^6.1.3",
 		"typescript": "^5.9.3"
 	}
 }
